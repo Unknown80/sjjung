@@ -16,12 +16,6 @@ if 'api_key' not in st.session_state:
 if 'chat' not in st.session_state:
     st.session_state.chat = []
 
-if 'chat_model' not in st.session_state:
-    if st.session_state.api_key:
-        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
-    else:
-        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key="your_api_key")
-
 # Sidebar for chat management and settings
 with st.sidebar:
     st.title("🔑 API Key")
@@ -40,9 +34,9 @@ with st.sidebar:
     # Save API key to session state when entered
     if api_key and api_key != st.session_state.get("api_key"):
         st.session_state.api_key = api_key
-        os.environ["OPENAI_API_KEY"] = api_key
+        #os.environ["OPENAI_API_KEY"] = api_key
         st.success("API Key saved!")
-        st.session_state.chat_model.openai_api_key = api_key
+        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
         st.session_state.chat_model.temperature = 0.5
     
     st.divider()
