@@ -26,8 +26,8 @@ if 'chat_model' not in st.session_state:
 with st.sidebar:
     st.title("🔑 API Key")
     
-    if st.session_state.api_key == "" and os.environ["OPENAI_API_KEY"]:
-        st.session_state.api_key = os.environ["OPENAI_API_KEY"]
+    #if st.session_state.api_key == "" and os.environ["OPENAI_API_KEY"]:
+    #    st.session_state.api_key = os.environ["OPENAI_API_KEY"]
 
     # API Key input
     api_key = st.text_input(
