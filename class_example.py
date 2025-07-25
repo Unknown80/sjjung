@@ -1,11 +1,8 @@
 import os
 import streamlit as st
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from openai import OpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import PromptTemplate
 
 # Page config
 st.set_page_config(page_title= "My Class Chat Assistant", page_icon="💬", layout="wide")
@@ -23,7 +20,7 @@ if 'chat_model' not in st.session_state:
     if st.session_state.api_key:
         st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
     else:
-        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o')
+        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key="")
 
 # Sidebar for chat management and settings
 with st.sidebar:
