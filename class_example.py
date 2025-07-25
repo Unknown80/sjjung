@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_core.output_parsers import StrOutputParser
 
 # Page config
@@ -16,6 +16,11 @@ if 'api_key' not in st.session_state:
 if 'chat' not in st.session_state:
     st.session_state.chat = []
 
+if "chat_model" not in st.session_state:
+    st.session_state.chat_model = ""
+
+if "model_name" not in st.session_state:
+    st.session_state.model_name = "gpt-4o"
 # Sidebar for chat management and settings
 with st.sidebar:
     st.title("🔑 API Key")
@@ -36,8 +41,15 @@ with st.sidebar:
         st.session_state.api_key = api_key
         #os.environ["OPENAI_API_KEY"] = api_key
         st.success("API Key saved!")
-        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
+        
+        if st.session_state.model_name == "gpt-4o":
+            st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
+        else:
+            st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o-mini', openai_api_key=st.session_state.api_key)
+        #st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
         st.session_state.chat_model.temperature = 0.5
+    
+    model_name = st.selectbox("Select Model", ["gpt-4o", "gpt-4o-mini"])
     
     st.divider()
 
@@ -66,15 +78,24 @@ if prompt := st.chat_input("Type your message here..."):
     # Generate AI response
     with st.spinner("Thinking..."):
         try:
-            system_prompt = SystemMessage(content="말 끝마다 용을 붙여서 얘기해 줘") + """{input}"""
+            # 1. 대화 기록을 LangChain 메시지로 변환
+            messages = [SystemMessage(content="말 끝마다 용을 붙여서 얘기해 줘")]
+            for msg in st.session_state.chat:
+                if msg["role"] == "user":
+                    messages.append(HumanMessage(content=msg["content"]))
+                elif msg["role"] == "ai":
+                    messages.append(AIMessage(content=msg["content"]))
 
-            chain = system_prompt | st.session_state.chat_model | StrOutputParser()
-            response = chain.invoke({"input": prompt})
-            ai_msg = {"role": "ai", "content": response}
+            # 2. 이번 입력도 추가
+            messages.append(HumanMessage(content=prompt))
+
+            # 3. LLM 호출
+            response = st.session_state.chat_model.invoke(messages)
+            ai_msg = {"role": "ai", "content": response.content}
             st.session_state.chat.append(ai_msg)
             
             with st.chat_message("ai"):
-                st.write(response)
+                st.write(response.content)
                 
         except Exception as e:
             error_msg = f"Sorry, I encountered an error: {str(e)}"
