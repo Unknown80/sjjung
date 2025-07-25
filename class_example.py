@@ -20,7 +20,7 @@ if 'chat_model' not in st.session_state:
     if st.session_state.api_key:
         st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
     else:
-        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key="")
+        st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key="your_api_key")
 
 # Sidebar for chat management and settings
 with st.sidebar:
