@@ -44,12 +44,14 @@ with st.sidebar:
         
         if st.session_state.model_name == "gpt-4o":
             st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
-        else:
+        elif st.session_state.model_name == "gpt-4o-mini":
             st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o-mini', openai_api_key=st.session_state.api_key)
+        else:
+            st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4.1', openai_api_key=st.session_state.api_key)
         #st.session_state.chat_model = ChatOpenAI(model_name = 'gpt-4o', openai_api_key=st.session_state.api_key)
         st.session_state.chat_model.temperature = 0.5
     
-    model_name = st.selectbox("Select Model", ["gpt-4o", "gpt-4o-mini"])
+    model_name = st.selectbox("Select Model", ["gpt-4.1", "gpt-4o", "gpt-4o-mini"])
     
     st.divider()
 
